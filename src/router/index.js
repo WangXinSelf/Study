@@ -13,6 +13,11 @@ const routes = [
     path: '/class_detali',
     name: 'class_detali',
     component: ()=>import('../components/class_detali.vue')
+  },
+  {
+    path: '/player_class',
+    name: 'player_class',
+    component: ()=>import('../components/player_class.vue')
   }
 ]
 

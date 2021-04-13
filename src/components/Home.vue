@@ -29,7 +29,7 @@
       </div>
       <div class="">
         <h2 style="color: #333;font-size: 24px;font-weight: 500;margin-bottom: 13px">最近推荐</h2>
-        <div class="class_item flex align-items-center">
+        <div class="class_item flex align-items-center" @click="goToClassDetail">
             <img class="class_img" src="https://edu-image.nosdn.127.net/a7aa974de1474afca5edb46abec03f68.jpg?imageView&quality=100&thumbnail=180y180" alt="">
              <span>OpenGl全面解析</span>
         </div>
@@ -81,6 +81,11 @@
           '实用英语',
           '更多'
         ]
+      }
+    },
+    methods:{
+      goToClassDetail(){
+        this.$router.push('/class_detali')
       }
     }
   }
