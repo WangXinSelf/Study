@@ -64,8 +64,7 @@
         center
         top="30vh"
         :visible.sync="dialogVisible"
-         width="25%"
-        :before-close="handleClose">
+         width="25%">
           <div style="height:250px" class="flex">
               <i class="el-icon-circle-check" style="font-size:55px;color:#00C758"></i>
               <div class="flex flex-direction-column mg-left-30 position-relative">

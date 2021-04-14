@@ -10,19 +10,29 @@
                 <el-input v-model="input" placeholder="请输入内容" style="width: 247px;" class="mg-left-50">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                    </el-input>
-                   <span class="nav_item text-white-space font-small mg-left-40">登录<span class="mg-x-10">|</span>注册</span>
+                   <span class="nav_item text-white-space font-small mg-left-40" style="z-index: 2;"
+                   @click="showLogin = true">登录<span class="mg-x-10">|</span>注册</span>
              </div>
        </div>
+       <Login :dialogVisible="showLogin" @close="showLogin = false" />
     </div>
   </template>
   <script>
+     import Login from './login.vue'
       export default  {
+        components:{
+          Login
+        },
            data(){
                return {
                    input:'',
-                   nav:['课程','学校','学校云','慕课堂']
+                   nav:['课程','学校','学校云','慕课堂'],
+                   showLogin:false
                }
-           }
+           },
+           methods: {
+
+           },
       }
   </script>
   <style scoped>
@@ -86,4 +96,5 @@
         margin: 0px auto;
         padding: 0px;
       }
+
   </style>
