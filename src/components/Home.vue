@@ -15,9 +15,14 @@
           </el-carousel-item>
         </el-carousel>
         <div style="width:200px;height:360px;border-radius:4px;" class="bg-white flex-center flex-direction-column ">
-          <img style="width: 83px;height:83px" class="mg-y-30"
+          <img v-if="!userInfo" style="width: 83px;height:83px" class="mg-y-30"
           src="http://edu-image.nosdn.127.net/6e66dbdc55464a44889c6a25428b2b4b.png?imageView&quality=100" alt="">
-          <el-button
+          <img v-if="userInfo" style="width: 83px;height:83px" class="mg-y-30"
+          src="https://edu-image.nosdn.127.net/11652E8DC02A06857E392EB2A3C8E2FD.png?imageView&thumbnail=56y56&quality=100" alt="">
+          <div v-if="userInfo" class="mg-bottom-20">{{userInfo.name}}</div>
+          <el-button v-if="userInfo"
+           style="line-height:9px;background:#00c758;color:#fff;width: 168px;height:32px" round>我的课程</el-button>
+          <el-button v-if="!userInfo"
            style="line-height:9px;background:#00c758;color:#fff;width: 168px;height:32px" round>登录/注册</el-button>
         </div>
       </div>
@@ -82,6 +87,11 @@
           '更多'
         ]
       }
+    },
+    computed:{
+      userInfo(){
+        return this.$store.state.userInfo
+     }
     },
     methods:{
       goToClassDetail(){

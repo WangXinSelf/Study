@@ -4,7 +4,13 @@
     <router-view/>  
   </div>
 </template>
-
+<script>
+  export default {
+    created() {
+        this.$store.state.userInfo = JSON.parse(localStorage.getItem('user'))
+    },
+  }
+</script>
 <style>
 #app{
   height: 100vh;

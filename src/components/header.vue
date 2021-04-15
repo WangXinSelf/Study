@@ -10,7 +10,19 @@
                 <el-input v-model="input" placeholder="请输入内容" style="width: 247px;" class="mg-left-50">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                    </el-input>
-                   <span class="nav_item text-white-space font-small mg-left-40" style="z-index: 2;"
+                   <div v-if="userInfo" class="flex align-items-center mg-x-20 position-relative">
+                     <span class="mg-x-10">个人中心</span>
+                     <el-dropdown @command="command">
+                      <div class="el-dropdown-link flex-center">
+                        <img style="width:30px;height:30px"  src="https://edu-image.nosdn.127.net/11652E8DC02A06857E392EB2A3C8E2FD.png?imageView&thumbnail=56y56&quality=100" alt="">
+                        <i class="el-icon-arrow-down el-icon-caret-bottom"></i>
+                      </div>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item :command="'exit'">退出登录</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                   </div>
+                   <span v-if="!userInfo" class="nav_item text-white-space font-small mg-left-40" style="z-index: 2;"
                    @click="showLogin = true">登录<span class="mg-x-10">|</span>注册</span>
              </div>
        </div>
@@ -27,11 +39,36 @@
                return {
                    input:'',
                    nav:['课程','学校','学校云','慕课堂'],
-                   showLogin:false
+                   showLogin:false,
+                  //  userInfo:JSON.parse(localStorage.getItem('user')),
+                   showExit:false,
                }
            },
+           computed:{
+              userInfo(){
+              return this.$store.state.userInfo
+            }
+           },
            methods: {
-
+            command(){
+              this.$confirm('确定要退出吗？', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(() => {
+                  localStorage.removeItem('user');
+                  this.$store.state.userInfo = ''
+                  this.$message({
+                    type: 'success',
+                    message: '退出成功!'
+                  });
+                }).catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已取消'
+                  });          
+              });
+            }
            },
       }
   </script>
