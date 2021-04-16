@@ -18,6 +18,11 @@ const routes = [
     path: '/player_class',
     name: 'player_class',
     component: ()=>import('../components/player_class.vue')
+  },
+  {
+    path: '/myself',
+    name: 'myself',
+    component: ()=>import('../components/myself.vue')
   }
 ]
 

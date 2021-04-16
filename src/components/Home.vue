@@ -32,11 +32,16 @@
            <img :src="item" alt="" v-for="item in school" :key="item" style="width: 110px;height: 31px">
          </div>
       </div>
-      <div class="">
+      <div class="flex flex-direction-column cursor-pointer">
         <h2 style="color: #333;font-size: 24px;font-weight: 500;margin-bottom: 13px">最近推荐</h2>
-        <div class="class_item flex align-items-center" @click="goToClassDetail">
-            <img class="class_img" src="https://edu-image.nosdn.127.net/a7aa974de1474afca5edb46abec03f68.jpg?imageView&quality=100&thumbnail=180y180" alt="">
-             <span>OpenGl全面解析</span>
+        <div class="flex flex-wrap">
+         <div class="flex flex-direction-column box " 
+           v-for="(item,index) in subjectLists" :key="index" @click="goToClassDetail(index)">
+          <img src="http://edu-image.nosdn.127.net/C4C10C0C27254ED77925331F19F83FED.jpg" alt="" class="wd-100" height="120">
+           <span class="mg-10" style="font-size:14px">{{item.name}}</span>
+           <span class="mg-x-10" style="padding-top: 4px;color: #999999;font-size: 12px;">{{item.schoolName}}</span>
+           <span class="mg-x-10" style="position: absolute; bottom: 16px;font-size: 12px;color: #999999;">2021年7月31日学期结束</span>
+      </div>
         </div>
       </div>
       <div class="">
@@ -85,17 +90,34 @@
           '应试英语',
           '实用英语',
           '更多'
-        ]
+        ],
+        subjectLists:[]
       }
     },
     computed:{
       userInfo(){
         return this.$store.state.userInfo
-     }
+     },
     },
+    created(){
+       this.getSubject()
+     },
     methods:{
-      goToClassDetail(){
-        this.$router.push('/class_detali')
+      goToClassDetail(index){
+        // console.log(this.subjectLists[index]);
+        localStorage.setItem("class_detali",JSON.stringify(this.subjectLists[index]))
+        setTimeout(()=>{
+          this.$router.push('/class_detali')
+        },10)
+      },
+      async getSubject(){
+        let params = {
+          user_id:this.$store.state.userInfo!==null?this.$store.state.userInfo.id:"",
+          range:"all"
+        }
+        let data = await this.$api.getSubject(params)
+        this.subjectLists = data.data
+        // console.log(data)
       }
     }
   }
@@ -168,5 +190,18 @@
     font-weight: 400;
     color: #999;
     padding-left: 65px;
+  }
+  .box{
+    width:214px;height:248px;border: 1px solid #EDEDED;
+    position: relative;
+    background:#fff;
+    margin: 10px;
+    box-shadow: 0 0 11px -8px;
+  }
+  .box:hover{
+    transition: all 0.5s cubic-bezier(0, 0.5, 0.5, 1) 0.2s;
+    box-shadow: 3px 7px 11px -8px;
+    transition: all 0.5s;
+    /* position:absolute */
   }
 </style>

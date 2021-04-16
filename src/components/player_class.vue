@@ -3,38 +3,64 @@
         <Header />
         <div class="flex border-top border-bottom" style="height:62px">  </div>
         <div class="flex flex-1">
-            <div class="bg-white mg-x-10 flex flex-direction-column" style="width:250px">
+            <div class="bg-white mg-x-10 flex flex-direction-column cursor-pointer" style="width:250px">
                 <img src="https://nos.netease.com/edu-image/58f33984a4be4035a7d42eafd41c10d2.jpg" width="250" height="130" alt="">
-                <div v-for="(item,index) in left_nav" :key="index" 
-                :class="index==2?'avtive':''"
-                class="flex flex-direction-column hg-50px border-bottom justify-center pd-x-10">
+                <div v-for="(item,index) in left_nav" :key="index"  @click="l_nav(index)"
+                :class="index==left_nav_index?'avtive':''"
+                class="flex flex-direction-column hg-50px border-bottom justify-center pd-x-10 left_nav">
                    <span>{{item}}</span>
                 </div>
             </div>
-            <div class="flex-1 flex bg-white flex-direction-column cursor-pointer" v-show="!showVideo">
+            <div class="flex-1 flex bg-white flex-direction-column cursor-pointer" v-show="left_nav_index == 2 && !showVideo">
              <span class="mg-30 font">课件</span>
-             <el-collapse v-for="(item,index) in classList" :key="index" v-model="activeNames" @change="handleChange" class="pd-x-20">
-                <el-collapse-item  :title="`第${index+1}讲  ${item.chapter_name}`" :name="index" class="mg-y-10 pd-x-10">
-                  <div v-for="(item2,index2) in item.chapter_item" :key="index2"  @click="playVideo"
+             <el-collapse v-for="(item,index) in titleList"
+              :key="index" v-model="activeNames" @change="handleChange" class="pd-x-20">
+                <el-collapse-item  :title="`第${index+1}讲  ${item.name}`" :name="index" class="mg-y-10 pd-x-10">
+                  <div v-for="(item2,index2) in item.sub_title" :key="index2"  @click="playVideo(item,item2,index)"
                   class="mg-x-20  nav_item pd-y-10 pd-x-10">
-                      {{item2}}
+                      {{item2.name}}
                       <i class="el-icon-video-play"></i>
                     </div>
                 </el-collapse-item>
               </el-collapse>
             </div>
-            <div class="flex-1 flex-center position-relative bg-white flex-direction-column cursor-pointer" v-show="showVideo">
-                   <div class="flex wd-100 position-absolute pd-20 top-0 align-items-center">
-                     课件<i class="el-icon-arrow-right"></i>第一讲<i class="el-icon-arrow-right"></i>
+            <div class="flex-1 flex-center position-relative bg-white flex-direction-column cursor-pointer" v-if="showVideo">
+                   <div class="subject flex wd-100 position-absolute pd-20 top-0 align-items-center" @click="showVideo = false">
+                     课件
+                     <i class="el-icon-arrow-right"></i>第{{videoIndex+1}}讲 {{curVideo.subject_title}}<i class="el-icon-arrow-right">
+                      {{curVideo.subject_sub_title}}
+                     </i>
                    </div>
-                    <Video> </Video>
+                    <Video :src="baseUrl+curVideo.video_url"> </Video>
             </div>
+
+                <div class="flex flex-direction-column wd-100 bg-white" v-show="left_nav_index == 5" style="min-height:400px">
+                    <div class="mg-x-20 mg-top-20 flex flex-direction-column" style="width:500px">
+                        <el-input type="textarea" :rows="5" v-model="textarea" placeholder="请输入评论"></el-input>
+                        <div class="flex justify-end mg-y-10">
+                            <el-button   style="width:100px;background:#00C758;color:#FFFF" @click="addComment">发送</el-button>
+                        </div>
+                    </div>
+                    <div class="mg-bottom-20 mg-x-20" style="width:500px;height:1px;background:#d2d3d2"></div>
+                    <div class="flex pd-y-30 pd-x-20" v-for="(item,index) in commentList" :key="index">
+                       <img class="rounded-circle wd-40px hg-40px" src="https://edu-image.nosdn.127.net/11652E8DC02A06857E392EB2A3C8E2FD.png?imageView&thumbnail=56y56&quality=100" alt="">
+                       <div class="flex flex-direction-column mg-x-20" style="font-size:13px">
+                           <div class="flex align-items-center mg-bottom-10">
+                               <span class="mg-right-10">{{item.user_name}}</span>
+                               <!-- <el-rate v-model="value1" disabled></el-rate> -->
+                           </div>
+                           <span class="mg-bottom-10" style="background: #eee;padding:5px">{{item.content}}</span>
+                           <span style="color: #999999;">发表于  {{item.creat_time}}</span>
+                       </div>
+                    </div>
+                 </div>
         </div>
     </div>
 </template>
 <script>
  import Header from "./header"
  import Video from "./video"
+ import base from '../request/baseUrl.js'
 export default {
     components:{
         Header,
@@ -63,15 +89,68 @@ export default {
                      { chapter_name:'综合实践',chapter_item:['广告板BillBoard']},
                  ],
             activeNames:'',
-            showVideo:false
+            showVideo:false,
+            titleList:[],
+            videoIndex:null,
+            curVideo:{},
+            left_nav_index:2,
+            value1:5,
+            baseUrl:base.domainUrl,
+            commentList:[],
+            textarea:''
+            // subject_id:localStorage.getItem("subject_id")
         }
+    },
+    created () {
+        this.getSubjectTitle()
+        this.getCommentListBySubject()
+        // console.log(this.baseUrl)
+    //    console.log(this.$route.params)
     },
     methods: {
         handleChange(){
 
         },
-        playVideo(){
-            this.showVideo = true
+        l_nav(index){
+            if(index == 0||index == 1||index==3||index==4) return this.$message.warning('此功能暂无开放')
+            this.left_nav_index = index
+        },
+        async getSubjectTitle() {
+                let data = await this.$api.getSubjectTitle({subject_id:localStorage.getItem("subject_id")})
+                this.titleList = data.data.subject_title
+        },
+        async playVideo(item,item2,index){
+            // console.log(item,item2)
+            this.videoIndex = index
+            let params = {
+                "subject_id": localStorage.getItem("subject_id"),
+                "subject_title": item.name,
+                "subject_sub_title": item2.name
+            }
+            let data = await this.$api.getSubjectVideo(params)
+            if(data.data.length  > 0){
+                this.curVideo = data.data[0]
+                this.showVideo = true
+            }
+        },
+        async getCommentListBySubject(){
+            let data = await this.$api.getCommentListBySubject({subject_id:localStorage.getItem("subject_id")})
+                this.commentList = data.data
+                // console.log(data.data)
+        },
+        async addComment(){
+            if(this.textarea == '') return this.$message.warning('评论内容不能为空')
+            let params = {
+                "subject_id": localStorage.getItem("subject_id"),
+                "user_id":this.$store.state.userInfo.id,
+                "user_name":this.$store.state.userInfo.name,
+                "content":this.textarea
+            }
+            let data = await this.$api.addComment(params)
+            if(data.data == 'ok'){
+                this.$message.success('评论成功！')
+                this.getCommentListBySubject()
+            }
         }
     },
 }
@@ -99,5 +178,13 @@ export default {
 .nav_item:hover{
         color:#00c758;
         background-color: #f7f7f7;
+}
+.subject:hover{
+    color:#00c758;
+        background-color: #f7f7f7;
+}
+.left_nav:hover{
+    color: #fff;
+    background-color: #00C758;
 }
 </style>

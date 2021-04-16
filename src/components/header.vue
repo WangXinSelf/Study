@@ -4,14 +4,14 @@
              <img style="height:32px" 
              src="https://edu-image.nosdn.127.net/3310f128e53b406f94400f7ae6046db2.png?imageView&quality=100" alt="">
              <ul class="flex mg-x-10" style="list-style: none;">
-                 <li v-for="item in nav" :key="item" class="mg-x-30 nav_item text-white-space">{{item}}</li>    
+                 <li v-for="item in nav" @click="back" :key="item" class="mg-x-30 nav_item text-white-space">{{item}}</li>    
              </ul>
              <div class="flex align-items-center">
                 <el-input v-model="input" placeholder="请输入内容" style="width: 247px;" class="mg-left-50">
                     <i slot="prefix" class="el-input__icon el-icon-search"></i>
                    </el-input>
                    <div v-if="userInfo" class="flex align-items-center mg-x-20 position-relative">
-                     <span class="mg-x-10">个人中心</span>
+                     <span class="mg-x-10" @click="goToMyself">个人中心</span>
                      <el-dropdown @command="command">
                       <div class="el-dropdown-link flex-center">
                         <img style="width:30px;height:30px"  src="https://edu-image.nosdn.127.net/11652E8DC02A06857E392EB2A3C8E2FD.png?imageView&thumbnail=56y56&quality=100" alt="">
@@ -50,6 +50,12 @@
             }
            },
            methods: {
+            goToMyself(){
+              this.$router.push('/myself')
+            },
+            back(){
+              this.$router.push('/')
+            },
             command(){
               this.$confirm('确定要退出吗？', '提示', {
                   confirmButtonText: '确定',

@@ -11,17 +11,22 @@ import {
      Loading,
      Message,
      dropdown,
+     drawer,
      dropdownItem,
      dropdownMenu,
      MessageBox,
+     rate,divider,
      collapseItem
  } from 'element-ui'
+Vue.use(divider)
+Vue.use(drawer)
 Vue.use(CarouselItem)
 Vue.use(dropdownMenu)
 Vue.use(dropdownItem)
 Vue.use(dropdown)
 Vue.use(Carousel)
 Vue.use(Input)
+Vue.use(rate)
 Vue.use(tabs)
 Vue.use(tabPane)
 Vue.use(Button)
